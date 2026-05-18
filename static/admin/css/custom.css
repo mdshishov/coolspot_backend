@@ -1,0 +1,10 @@
+label.required {
+    font-weight: normal !important;
+}
+
+label.required::after,
+.required::after {
+    content: "*" !important;
+    color: var(--error-fg);
+    vertical-align: top !important;
+}

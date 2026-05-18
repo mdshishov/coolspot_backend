@@ -1,0 +1,9 @@
+.inline-group td.original,
+.inline-group th.original {
+    display: none;
+}
+
+.inline-group td.field-customuser,
+.inline-group td.delete {
+    padding-top: 16px !important;
+}
