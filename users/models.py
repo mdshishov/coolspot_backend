@@ -6,6 +6,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
 
+from users.validators import validate_client_name
+
 
 class CustomUserManager(UserManager):
     def create_superuser(self, username, password=None, **extra_fields):
@@ -20,17 +22,6 @@ class CustomUserManager(UserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-
-
-def validate_client_name(value):
-    name_pattern = re.compile(
-        r"^[A-Za-zА-Яа-яЁё]+"
-        r"(?:-[A-Za-zА-Яа-яЁё]+)?"
-        r"(?: [A-Za-zА-Яа-яЁё]+"
-        r"(?:-[A-Za-zА-Яа-яЁё]+)?){0,2}$"
-    )
-    if not name_pattern.fullmatch(value):
-        raise ValidationError("Недопустимый формат имени")
 
 
 class CustomUser(AbstractUser):
@@ -116,9 +107,13 @@ class CustomUser(AbstractUser):
         if self.role == self.Role.CLIENT and not self.phone:
             if not self.phone:
                 raise ValidationError({"phone": "Телефон обязателен для клиента"})
-            if not self.full_name:
-                raise ValidationError({"full_name": "Имя обязательно для клиента"})
+        if not self.full_name:
+            raise ValidationError({"full_name": "Имя обязательно для клиента"})
+
+        try:
             validate_client_name(self.full_name)
+        except ValidationError as e:
+            raise ValidationError({"full_name": e.messages})
         super().clean()
 
     def save(self, *args, **kwargs):

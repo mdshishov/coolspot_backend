@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from phonenumber_field.phonenumber import to_python
 from rest_framework import serializers
 
+from users.validators import validate_client_name
+
 User = get_user_model()
 
 DEFAULT_ERROR_MESSAGES = {
@@ -61,9 +63,13 @@ class ClientPhoneCheckSerializer(serializers.Serializer):
 
 class ClientRegisterSerializer(serializers.ModelSerializer):
     phone = PhoneNumberField(region="RU", error_messages=DEFAULT_ERROR_MESSAGES)
-    full_name = serializers.CharField(error_messages=DEFAULT_ERROR_MESSAGES)
+    full_name = serializers.CharField(
+        validators=[validate_client_name],
+        error_messages=DEFAULT_ERROR_MESSAGES,
+    )
     password = serializers.CharField(
-        write_only=True, error_messages=REQUIRED_BLANK_ERROR_MESSAGES
+        write_only=True,
+        error_messages=REQUIRED_BLANK_ERROR_MESSAGES,
     )
 
     class Meta:
@@ -128,8 +134,84 @@ class ProfileSerializer(serializers.ModelSerializer):
             "phone",
         )
 
-class ProfileReponseSerializer(serializers.Serializer):
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "phone",
+            "email",
+            "full_name",
+        )
+
+    def validate_phone(self, value):
+        user = self.instance
+
+        if value and User.objects.exclude(pk=user.pk).filter(phone=value).exists():
+            raise serializers.ValidationError(
+                "Пользователь с таким телефоном уже существует"
+            )
+
+        return value
+
+    def validate_email(self, value):
+        user = self.instance
+
+        if value and User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError(
+                "Пользователь с таким email уже существует"
+            )
+
+        return value
+
+    def validate(self, attrs):
+        user = self.instance
+        role = user.role
+
+        phone = attrs.get("phone", user.phone)
+        full_name = attrs.get("full_name", user.full_name)
+
+        if role == User.Role.CLIENT:
+            if not phone:
+                raise serializers.ValidationError({"phone": "Заполните поле"})
+            if not full_name:
+                raise serializers.ValidationError({"full_name": "Заполните поле"})
+
+            try:
+                validate_client_name(full_name)
+            except DjangoValidationError as e:
+                raise serializers.ValidationError({"full_name": e.messages})
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        old_phone = instance.phone
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        if instance.role == User.Role.CLIENT and old_phone != instance.phone:
+            instance.username = instance.generate_username()
+
+        instance.save()
+
+        return instance
+
+
+class ProfileResponseSerializer(serializers.Serializer):
     full_name = serializers.CharField()
     email = serializers.EmailField()
     phone = serializers.CharField()
     cart_items_count = serializers.IntegerField()
+
+
+class DeactivateProfileSerializer(serializers.Serializer):
+    password = serializers.CharField()
+
+    def validate_password(self, value):
+        user = self.context["request"].user
+
+        if not user.check_password(value):
+            raise serializers.ValidationError("Неверный пароль")
+
+        return value

@@ -1,11 +1,15 @@
 from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from drf_spectacular.utils import extend_schema, inline_serializer
-from rest_framework import serializers
+from drf_spectacular.utils import extend_schema, inline_serializer, extend_schema_view
+from rest_framework import serializers, status
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+)
 from phonenumber_field.phonenumber import to_python
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,7 +22,9 @@ from .serializers import (
     ChangePasswordSerializer,
     ProfileSerializer,
     LoginResponseSerializer,
-    ProfileReponseSerializer,
+    ProfileResponseSerializer,
+    ProfileUpdateSerializer,
+    DeactivateProfileSerializer,
 )
 
 User = get_user_model()
@@ -62,6 +68,7 @@ class ClientRegisterView(CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = ClientRegisterSerializer
 
+
 @extend_schema(
     summary="Вход по логину или телефону",
     responses=LoginResponseSerializer,
@@ -72,7 +79,7 @@ class LoginView(TokenObtainPairView):
 
 
 @extend_schema(
-    summary="Изменение пароля",
+    summary="Изменение пароля профиля",
     request=ChangePasswordSerializer,
     responses=inline_serializer(
         name="ChangePasswordResponse",
@@ -103,11 +110,20 @@ class ChangePasswordView(APIView):
 
         return Response({"detail": "Пароль успешно изменён"})
 
-@extend_schema(
-    summary="Информация о текущем пользователе",
-    responses=ProfileReponseSerializer,
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Информация о текущем пользователе",
+        responses=ProfileSerializer,
+    ),
+    patch=extend_schema(
+        summary="Обновление данных профиля",
+        request=ProfileUpdateSerializer,
+        responses=ProfileSerializer,
+    ),
 )
-class ProfileView(RetrieveAPIView):
+class ProfileView(RetrieveUpdateAPIView):
+    http_method_names = ["get", "patch"]
     serializer_class = ProfileSerializer
 
     def get_object(self):
@@ -117,3 +133,35 @@ class ProfileView(RetrieveAPIView):
                 Value(0),
             )
         ).get(pk=self.request.user.pk)
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return ProfileUpdateSerializer
+
+        return ProfileSerializer
+
+@extend_schema(
+    summary="Деактивация профиля",
+    request=DeactivateProfileSerializer,
+)
+class DeactivateProfileView(APIView):
+    def post(self, request):
+        serializer = DeactivateProfileSerializer(
+            data=request.data,
+            context={"request": request},
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        user = request.user
+        user.is_active = False
+        user.password_changed_at = timezone.now()
+
+        user.save(
+            update_fields=[
+                "is_active",
+                "password_changed_at",
+            ]
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
