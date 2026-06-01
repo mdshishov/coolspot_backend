@@ -242,7 +242,7 @@ class DishAdmin(BaseAdmin):
                     "composition",
                     "subcategory",
                     "is_available",
-                    "max_quantity_per_order",
+                    "max_per_order",
                     "tags",
                 )
             },

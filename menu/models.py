@@ -1,6 +1,8 @@
 import uuid
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Q
 from slugify import slugify
 
 
@@ -34,7 +36,7 @@ class SubCategory(models.Model):
             models.UniqueConstraint(
                 fields=["category", "slug"],
                 name="unique_subcategory_slug_per_category",
-            )
+            ),
         ]
         verbose_name = "подкатегория"
         verbose_name_plural = "подкатегории"
@@ -85,8 +87,13 @@ class Dish(models.Model):
     class Meta:
         ordering = ["title"]
         indexes = [
-            models.Index(fields=["is_available"]),
             models.Index(fields=["subcategory", "is_available"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(discount_percent__lte=100),
+                name="discount_percent_lte_100",
+            ),
         ]
         verbose_name = "блюдо"
         verbose_name_plural = "блюда"
@@ -115,6 +122,10 @@ class Dish(models.Model):
     discount_percent = models.PositiveIntegerField(
         "Скидка (%)",
         default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100),
+        ],
     )
     amount = models.PositiveIntegerField("Вес/объём")
     unit = models.CharField(
@@ -148,7 +159,7 @@ class Dish(models.Model):
         default=True,
         help_text="Отображается в меню и доступно для приобретения",
     )
-    max_quantity_per_order = models.PositiveIntegerField(
+    max_per_order = models.PositiveIntegerField(
         "Макс. в заказе",
         default=10,
         help_text="Максимальное количество в одном заказе",
@@ -164,7 +175,7 @@ class Dish(models.Model):
 
     subcategory = models.ForeignKey(
         SubCategory,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="dishes",
         verbose_name="Подкатегория",
         null=True,

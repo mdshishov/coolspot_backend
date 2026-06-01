@@ -137,11 +137,11 @@ class OrderDish(models.Model):
     def clean(self):
         super().clean()
         if self._state.adding:
-            if self.dish and self.dish.max_quantity_per_order is not None:
-                if self.quantity > self.dish.max_quantity_per_order:
+            if self.dish and self.dish.max_per_order is not None:
+                if self.quantity > self.dish.max_per_order:
                     raise ValidationError(
                         {
-                            "quantity": f"Максимум для блюда: {self.dish.max_quantity_per_order}"
+                            "quantity": f"Максимум для блюда: {self.dish.max_per_order}"
                         }
                     )
             if not self.dish:
