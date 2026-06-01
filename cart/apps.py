@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class CartConfig(AppConfig):
-    name = 'cart'
-    verbose_name = 'Корзины пользователей'
+    name = "cart"
+    verbose_name = "Корзины пользователей"

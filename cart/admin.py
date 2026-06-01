@@ -9,8 +9,8 @@ from .models import Cart, CartDish
 class CartDishInline(admin.TabularInline):
     model = CartDish
     extra = 0
-    fields = ('dish', 'quantity')
-    autocomplete_fields = ('dish',)
+    fields = ("dish", "quantity")
+    autocomplete_fields = ("dish",)
 
 
 @admin.register(Cart)
@@ -23,90 +23,87 @@ class CartAdmin(admin.ModelAdmin):
             return True
         return False
 
-    fields = ('user',)
+    fields = ("user",)
 
-    @admin.display(description='')
+    @admin.display(description="")
     def admin_actions(self, obj):
         app_label = obj._meta.app_label
         model_name = obj._meta.model_name
 
-        view_url = reverse(
-            f'admin:{app_label}_{model_name}_change',
-            args=[obj.id]
-        )
+        view_url = reverse(f"admin:{app_label}_{model_name}_change", args=[obj.id])
 
         return format_html(
-            '''
+            """
             <a class="viewlink" style="text-decoration: none" href="{}"></a>
-            ''',
+            """,
             view_url,
         )
 
     list_display = (
-        'admin_actions',
-        'id',
-        'user',
-        'total_positions',
-        'total_dishes',
-        'total_price',
+        "admin_actions",
+        "id",
+        "user",
+        "total_positions",
+        "total_dishes",
+        "total_price",
     )
-    readonly_fields = ('total_price',)
+    readonly_fields = ("total_price",)
     inlines = (CartDishInline,)
     search_fields = (
-        'user__username',
-        'user__full_name',
-        'user__phone',
-        'user__email',
+        "user__username",
+        "user__full_name",
+        "user__phone",
+        "user__email",
     )
 
     def total_positions(self, obj):
         return obj.total_positions
 
-    total_positions.short_description = 'Всего позиций'
+    total_positions.short_description = "Всего позиций"
 
     def total_dishes(self, obj):
         return obj.total_dishes
 
-    total_dishes.short_description = 'Всего блюд'
+    total_dishes.short_description = "Всего блюд"
 
     def total_price(self, obj):
         return obj.total_price
 
-    total_price.short_description = 'Итоговая цена (₽)'
+    total_price.short_description = "Итоговая цена (₽)"
 
 
 @admin.register(CartDish)
 class CartDishAdmin(BaseAdmin):
     list_display = (
-        'admin_actions',
-        'cart',
-        'dish',
-        'quantity',
-        'dish_price',
-        'dish_final_price',
-        'total_price'
+        "admin_actions",
+        "cart",
+        "dish",
+        "quantity",
+        "dish_price",
+        "dish_final_price",
+        "total_price",
     )
-    list_select_related = ('cart', 'dish')
-    autocomplete_fields = ('cart', 'dish')
+    list_select_related = ("cart", "dish")
+    autocomplete_fields = ("cart", "dish")
     search_fields = (
-        'cart__user__username',
-        'cart__user__full_name',
-        'cart__user__email',
-        'cart__user__phone',
-        'dish__title',
+        "cart__user__username",
+        "cart__user__full_name",
+        "cart__user__email",
+        "cart__user__phone",
+        "dish__title",
     )
 
     def dish_price(self, obj):
         return obj.dish.price
 
-    dish_price.short_description = 'Цена (₽)'
+    dish_price.short_description = "Цена (₽)"
 
     def dish_final_price(self, obj):
         return obj.dish.final_price
 
-    dish_final_price.short_description = 'Цена со скидкой (₽)'
+    dish_final_price.short_description = "Цена со скидкой (₽)"
 
     def total_price(self, obj):
         return obj.total_price
 
-    total_price.short_description = 'Итоговая цена (₽)'
+    total_price.short_description = "Итоговая цена (₽)"

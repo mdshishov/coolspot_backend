@@ -15,11 +15,10 @@ def create_user_cart(sender, instance, created, **kwargs):
 
     if created and instance.is_staff_role:
         group_name = settings.ACCESS_GROUPS[ROLE_TO_GROUP[CustomUser.Role.STAFF]]
-        group = Group.objects.get(
-            name=group_name
-        )
+        group = Group.objects.get(name=group_name)
 
         instance.groups.add(group)
+
 
 @receiver(post_migrate)
 def create_groups(sender, **kwargs):
@@ -29,37 +28,37 @@ def create_groups(sender, **kwargs):
         if key == ROLE_TO_GROUP[CustomUser.Role.STAFF]:
             permissions = Permission.objects.filter(
                 codename__in=[
-                    'view_dish',
-                    'add_dish',
-                    'change_dish',
+                    "view_dish",
+                    "add_dish",
+                    "change_dish",
 
-                    'view_dishimage',
-                    'add_dishimage',
-                    'change_dishimage',
-                    'delete_dishimage',
+                    "view_dishimage",
+                    "add_dishimage",
+                    "change_dishimage",
+                    "delete_dishimage",
 
-                    'view_tag',
-                    'add_tag',
-                    'change_tag',
+                    "view_tag",
+                    "add_tag",
+                    "change_tag",
 
-                    'view_category',
-                    'add_category',
-                    'change_category',
+                    "view_category",
+                    "add_category",
+                    "change_category",
 
-                    'view_subcategory',
-                    'add_subcategory',
-                    'change_subcategory',
+                    "view_subcategory",
+                    "add_subcategory",
+                    "change_subcategory",
 
-                    'view_orderdish',
-                    'change_orderdish',
-                    'add_orderdish',
-                    'delete_orderdish',
+                    "view_orderdish",
+                    "change_orderdish",
+                    "add_orderdish",
+                    "delete_orderdish",
 
-                    'view_order',
-                    'change_order',
-                    'delete_order',
+                    "view_order",
+                    "change_order",
+                    "delete_order",
 
-                    'view_customuser',
+                    "view_customuser",
                 ]
             )
 
