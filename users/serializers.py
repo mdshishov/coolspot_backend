@@ -198,13 +198,6 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ProfileResponseSerializer(serializers.Serializer):
-    full_name = serializers.CharField()
-    email = serializers.EmailField()
-    phone = serializers.CharField()
-    cart_items_count = serializers.IntegerField()
-
-
 class DeactivateProfileSerializer(serializers.Serializer):
     password = serializers.CharField()
 

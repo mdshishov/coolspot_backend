@@ -22,7 +22,6 @@ from .serializers import (
     ChangePasswordSerializer,
     ProfileSerializer,
     LoginResponseSerializer,
-    ProfileResponseSerializer,
     ProfileUpdateSerializer,
     DeactivateProfileSerializer,
 )
@@ -124,21 +123,16 @@ class ChangePasswordView(APIView):
 )
 class ProfileView(RetrieveUpdateAPIView):
     http_method_names = ["get", "patch"]
-    serializer_class = ProfileSerializer
 
     def get_object(self):
-        return User.objects.annotate(
-            cart_items_count=Coalesce(
-                Sum("cart__positions__quantity"),
-                Value(0),
-            )
-        ).get(pk=self.request.user.pk)
+        return self.request.user
 
     def get_serializer_class(self):
         if self.request.method == "PATCH":
             return ProfileUpdateSerializer
 
         return ProfileSerializer
+
 
 @extend_schema(
     summary="Деактивация профиля",
