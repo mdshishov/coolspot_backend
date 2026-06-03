@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const discount = parseFloat(discountInput.value) || 0;
 
             if (!price) {
-                preview.textContent = '0';
+                preview.textContent = '0.00';
                 return;
             }
 
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 price * (100 - discount) / 100
             );
 
-            preview.textContent = result;
+            preview.textContent = result.toFixed(2);
         }
 
         priceInput.addEventListener('input', updateDiscountPrice);

@@ -3,8 +3,9 @@ from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Q, ExpressionWrapper, F, DecimalField
 
+from cart.querysets import CartQuerySet
 from users.models import CustomUser
 from menu.models import Dish
 
@@ -14,16 +15,14 @@ class Cart(models.Model):
         verbose_name = "корзина"
         verbose_name_plural = "корзины"
 
+    objects = CartQuerySet.as_manager()
+
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
         related_name="cart",
         verbose_name="Пользователь",
     )
-
-    @property
-    def total_price(self):
-        return sum(item.total_price for item in self.positions.all()) or Decimal("0.00")
 
     def save(self, *args, **kwargs):
         if self.pk and Cart.objects.filter(pk=self.pk).exists():
@@ -45,6 +44,11 @@ class Cart(models.Model):
     def total_dishes(self):
         return self.positions.aggregate(total=Sum("quantity"))["total"] or 0
 
+    @property
+    def selected_price(self):
+        positions = self.positions.select_related("dish").filter(is_selected=True)
+        return sum(item.total_price for item in positions) or Decimal("0.00")
+
     def __str__(self):
         return f"Корзина {self.user.username}"
 
@@ -52,7 +56,13 @@ class Cart(models.Model):
 class CartDish(models.Model):
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["cart", "dish"], name="unique_dish_in_cart")
+            models.UniqueConstraint(
+                fields=["cart", "dish"], name="unique_dish_in_cart"
+            ),
+            models.CheckConstraint(
+                condition=Q(quantity__gte=1),
+                name="quantity_gte_1",
+            ),
         ]
         verbose_name = "позиция в корзине"
         verbose_name_plural = "позиции в корзинах"
@@ -74,6 +84,10 @@ class CartDish(models.Model):
         "Кол-во",
         default=1,
         validators=[MinValueValidator(1)],
+    )
+    is_selected = models.BooleanField(
+        "Выбрано для заказа",
+        default=True,
     )
 
     @property

@@ -45,9 +45,8 @@ class CartAdmin(admin.ModelAdmin):
         "user",
         "total_positions",
         "total_dishes",
-        "total_price",
+        "selected_price",
     )
-    readonly_fields = ("total_price",)
     inlines = (CartDishInline,)
     search_fields = (
         "user__username",
@@ -66,18 +65,20 @@ class CartAdmin(admin.ModelAdmin):
 
     total_dishes.short_description = "Всего блюд"
 
-    def total_price(self, obj):
-        return obj.total_price
+    def selected_price(self, obj):
+        return obj.selected_price
 
-    total_price.short_description = "Итоговая цена (₽)"
+    selected_price.short_description = "Итоговая цена выбранных позиций (₽)"
 
 
 @admin.register(CartDish)
 class CartDishAdmin(BaseAdmin):
+    list_editable = ("quantity", "is_selected")
     list_display = (
         "admin_actions",
         "cart",
         "dish",
+        "is_selected",
         "quantity",
         "dish_price",
         "dish_final_price",

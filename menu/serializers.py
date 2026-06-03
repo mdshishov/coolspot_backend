@@ -96,6 +96,7 @@ class DishSerializer(serializers.ModelSerializer):
         model = Dish
         fields = (
             "id",
+            "is_available",
             "title",
             "description",
             "composition",
