@@ -8,8 +8,6 @@ from .models import CartDish, Cart
 
 class CartDishSerializer(serializers.ModelSerializer):
     dish = DishSerializer(read_only=True)
-
-    quantity_changed = serializers.SerializerMethodField()
     is_available = serializers.BooleanField(
         source="dish.is_available",
         read_only=True,
@@ -23,13 +21,13 @@ class CartDishSerializer(serializers.ModelSerializer):
             "quantity",
             "is_available",
             "is_selected",
-            "quantity_changed",
         )
 
-    @extend_schema_field(bool)
-    def get_quantity_changed(self, obj):
-        changed_ids = self.context.get("changed_ids", set())
-        return obj.id in changed_ids
+
+class CartWarningSerializer(serializers.Serializer):
+    code = serializers.CharField()
+    dish_id = serializers.IntegerField()
+    message = serializers.CharField()
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -50,6 +48,9 @@ class CartSerializer(serializers.ModelSerializer):
     def get_selected_price(self, obj):
         return int(obj.selected_price)
 
+class CartResponseSerializer(serializers.Serializer):
+    cart = CartSerializer()
+    warnings = CartWarningSerializer(many=True)
 
 class CartDishSummarySerializer(serializers.ModelSerializer):
     dish_id = serializers.PrimaryKeyRelatedField(source="dish", read_only=True)
@@ -68,7 +69,7 @@ class CartSummarySerializer(serializers.ModelSerializer):
         fields = ("total_dishes", "positions")
 
 
-class CartSetPositionSerializer(serializers.Serializer):
+class SetPositionSerializer(serializers.Serializer):
     dish_id = serializers.PrimaryKeyRelatedField(
         queryset=Dish.objects.all(),
         source="dish",
@@ -85,12 +86,6 @@ class CartSetPositionSerializer(serializers.Serializer):
     )
 
 
-class CartWarningSerializer(serializers.Serializer):
-    code = serializers.CharField()
-    dish_id = serializers.IntegerField()
-    message = serializers.CharField()
-
-
 class SetPositionResponseSerializer(serializers.Serializer):
-    cart = CartSummarySerializer()
+    cart_summary = CartSummarySerializer()
     warnings = CartWarningSerializer(many=True, required=False)

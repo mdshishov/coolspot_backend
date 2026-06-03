@@ -11,6 +11,8 @@ class CartService:
     def normalize_cart(cart):
         from django.db import connection
 
+        warnings = []
+
         with connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -20,12 +22,19 @@ class CartService:
                     WHERE cd.dish_id = d.id
                       AND cd.cart_id = %s
                       AND cd.quantity > d.max_per_order
-                    RETURNING cd.id
+                    RETURNING d.id, d.max_per_order
                 """,
                 [cart.id],
             )
 
-            updated_quantity_ids = {row[0] for row in cursor.fetchall()}
+            warnings.extend(
+                {
+                    "code": "max_per_order_exceeded",
+                    "dish_id": dish_id,
+                    "message": f"Количество уменьшено до {max_per_order}",
+                }
+                for dish_id, max_per_order in cursor.fetchall()
+            )
 
             cursor.execute(
                 """
@@ -36,12 +45,21 @@ class CartService:
                       AND cd.cart_id = %s
                       AND d.is_available = FALSE
                       AND cd.is_selected = TRUE
-                    RETURNING cd.id
+                    RETURNING d.id
                 """,
                 [cart.id],
             )
 
-            return updated_quantity_ids
+            warnings.extend(
+                {
+                    "code": "dish_unavailable",
+                    "dish_id": dish_id,
+                    "message": "Позиция недоступна для заказа",
+                }
+                for (dish_id,) in cursor.fetchall()
+            )
+
+        return warnings
 
     @staticmethod
     def get_cart(user):
@@ -52,8 +70,18 @@ class CartService:
 
     @staticmethod
     def normalize_position(dish, quantity=None, is_selected=None):
+        warnings = []
+
         if not dish.is_available:
+            warnings.append(
+                {
+                    "code": "dish_unavailable",
+                    "dish_id": dish.id,
+                    "message": "Позиция недоступна для заказа",
+                }
+            )
             return {
+                "warnings": warnings,
                 "quantity": 1,
                 "is_selected": False,
             }
@@ -63,8 +91,16 @@ class CartService:
                 quantity = 0
             elif dish.max_per_order is not None:
                 quantity = min(quantity, dish.max_per_order)
+                warnings.append(
+                    {
+                        "code": "max_per_order_exceeded",
+                        "dish_id": dish.id,
+                        "message": f"Количество уменьшено до {dish.max_per_order}",
+                    }
+                )
 
         return {
+            "warnings": warnings,
             "quantity": quantity,
             "is_selected": is_selected,
         }

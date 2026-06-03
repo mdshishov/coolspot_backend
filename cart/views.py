@@ -10,8 +10,9 @@ from rest_framework.views import APIView
 from cart.serializers import (
     CartSerializer,
     CartSummarySerializer,
-    CartSetPositionSerializer,
     SetPositionResponseSerializer,
+    SetPositionSerializer,
+    CartResponseSerializer,
 )
 from cart.services import CartService
 
@@ -20,20 +21,22 @@ User = get_user_model()
 
 @extend_schema(
     summary="Получение полной информации о корзине с предварительной нормализацией",
-    responses=CartSerializer,
+    responses=CartResponseSerializer,
 )
 class CartView(APIView):
     @transaction.atomic
     def get(self, request):
         cart = CartService.get_cart(request.user)
-        changed_ids = CartService.normalize_cart(cart)
+        warnings = CartService.normalize_cart(cart)
         cart = CartService.get_cart(request.user)
-        serializer = CartSerializer(
-            cart,
-            context={"changed_ids": changed_ids},
+        return Response(
+            CartResponseSerializer(
+                {
+                    "cart": cart,
+                    "warnings": warnings,
+                }
+            ).data
         )
-
-        return Response(serializer.data)
 
 
 @extend_schema(
@@ -50,13 +53,13 @@ class CartSummaryView(APIView):
 
 @extend_schema(
     summary="Добавление/редактирование/удаление позиции (возвращает краткую информацию о корзине)",
-    request=CartSetPositionSerializer,
+    request=SetPositionSerializer,
     responses=SetPositionResponseSerializer,
 )
 class SetPositionView(APIView):
     @transaction.atomic
     def post(self, request):
-        serializer = CartSetPositionSerializer(data=request.data)
+        serializer = SetPositionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         cart = CartService.get_cart(request.user)
@@ -64,16 +67,6 @@ class SetPositionView(APIView):
         dish = serializer.validated_data["dish"]
         quantity = serializer.validated_data.get("quantity")
         is_selected = serializer.validated_data.get("is_selected")
-
-        warnings = []
-        if not dish.is_available:
-            warnings.append(
-                {
-                    "code": "dish_unavailable",
-                    "dish_id": dish.id,
-                    "message": "Позиция недоступна для заказа",
-                }
-            )
 
         normalized = CartService.normalize_position(
             dish=dish,
@@ -89,8 +82,10 @@ class SetPositionView(APIView):
 
         cart = CartService.get_cart(request.user)
         return Response(
-            {
-                "cart": CartSummarySerializer(cart).data,
-                "warnings": warnings,
-            }
+            SetPositionResponseSerializer(
+                {
+                    "cart_summary": cart,
+                    "warnings": normalized.get("warnings", []),
+                }
+            ).data
         )
