@@ -121,7 +121,7 @@ class DishSerializer(serializers.ModelSerializer):
         return {
             "base": int(obj.price),
             "discount_percent": obj.discount_percent,
-            "final": obj.final_price,
+            "final": int(obj.final_price),
         }
 
     @extend_schema_field(DishImagesSerializer)

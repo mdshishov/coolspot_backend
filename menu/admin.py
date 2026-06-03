@@ -159,6 +159,7 @@ class DishAdmin(BaseAdmin):
         "title",
         "subcategory",
         "tags_list",
+        "max_per_order",
         "price",
         "final_price",
         "discount_percent",
@@ -175,7 +176,7 @@ class DishAdmin(BaseAdmin):
     @admin.display(description="Цена со скидкой (₽)")
     def final_price(self, obj):
         return format_html(
-            '<span id="final_price_preview">{}</span>', obj.final_price or 0
+            '<span id="final_price_preview">{}</span>', obj.final_price
         )
 
     @admin.display(description="Тэги")
@@ -212,6 +213,7 @@ class DishAdmin(BaseAdmin):
 
     list_editable = (
         "is_available",
+        "max_per_order",
         "price",
         "discount_percent",
         "amount",

@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -94,6 +95,10 @@ class Dish(models.Model):
                 condition=Q(discount_percent__lte=100),
                 name="discount_percent_lte_100",
             ),
+            models.CheckConstraint(
+                condition=Q(max_per_order__gte=1),
+                name="max_per_order_gte_1",
+            ),
         ]
         verbose_name = "блюдо"
         verbose_name_plural = "блюда"
@@ -163,6 +168,7 @@ class Dish(models.Model):
         "Макс. в заказе",
         default=10,
         help_text="Максимальное количество в одном заказе",
+        validators=[MinValueValidator(1)],
     )
     created_at = models.DateTimeField(
         "Дата создания",
@@ -199,11 +205,16 @@ class Dish(models.Model):
     @property
     def final_price(self):
         if not self.price:
-            return 0
+            return Decimal("0.00")
+
         if not self.discount_percent:
             return self.price
 
-        return round(self.price * (100 - self.discount_percent) / 100)
+        return Decimal(
+            round(
+                self.price * (100 - self.discount_percent) / 100
+            )
+        ).quantize(Decimal("0.00"))
 
     @property
     def total_calories(self):
