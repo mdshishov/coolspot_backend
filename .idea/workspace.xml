@@ -4,27 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cd0a9ac7-8ede-4420-bba2-e8aac43fb80f" name="Changes" comment="Update users API">
-      <change afterPath="$PROJECT_DIR$/orders/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/orders/serializers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/orders/services.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/orders/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/images/favicon.ico" afterDir="false" />
+    <list default="true" id="cd0a9ac7-8ede-4420-bba2-e8aac43fb80f" name="Changes" comment="Add orders API and main page admin settings">
+      <change afterPath="$PROJECT_DIR$/marketing/serializers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/marketing/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cart/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/cart/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cart/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/cart/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/orders/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/orders/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/orders/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/orders/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/orders/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/orders/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/css/custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/css/custom.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/admin/js/orderdish_inline.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/admin/js/orderdish_inline.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/admin/base_site.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin/base_site.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,18 +51,18 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "D:/folder/coolspot_backend/orders",
+    "last_opened_file_path": "D:/folder/coolspot_backend/marketing",
     "settings.editor.selected.configurable": "com.jetbrains.python.black.configuration.BlackFormatterConfigurable",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\folder\coolspot_backend\marketing" />
       <recent name="D:\folder\coolspot_backend\orders" />
       <recent name="D:\folder\coolspot_backend\static\fonts" />
       <recent name="D:\folder\coolspot_backend\static\images" />
       <recent name="D:\folder\coolspot_backend\cart" />
-      <recent name="D:\folder\coolspot_backend\menu" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\folder\coolspot_backend\static\admin" />
@@ -181,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780538011605</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Add orders API and main page admin settings">
+      <option name="closed" value="true" />
+      <created>1780551584277</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1780551584277</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -192,7 +185,8 @@
     <MESSAGE value="Add cart API" />
     <MESSAGE value="Update cart API" />
     <MESSAGE value="Update users API" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update users API" />
+    <MESSAGE value="Add orders API and main page admin settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add orders API and main page admin settings" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

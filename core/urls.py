@@ -26,11 +26,16 @@ from .views import home_page
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger_ui"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger_ui",
+    ),
     path("api/auth/", include("users.urls")),
     path("api/menu/", include("menu.urls")),
     path("api/cart/", include("cart.urls")),
     path("api/orders/", include("orders.urls")),
+    path("api/marketing/", include("marketing.urls")),
 ]
 
 if settings.DEBUG:

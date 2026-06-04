@@ -82,7 +82,6 @@ class MenuView(ListAPIView):
                 "tags",
                 "images",
             )
-            .distinct()
         )
 
         category_slug = self.request.query_params.get("category")
@@ -106,7 +105,7 @@ class MenuView(ListAPIView):
                 | Q(composition__icontains=search)
             )
 
-        return qs
+        return qs.distinct()
 
 
 @extend_schema(
