@@ -9,6 +9,7 @@ from rest_framework.generics import (
     CreateAPIView,
     RetrieveAPIView,
     RetrieveUpdateAPIView,
+    UpdateAPIView,
 )
 from phonenumber_field.phonenumber import to_python
 from rest_framework.views import APIView
@@ -110,28 +111,31 @@ class ChangePasswordView(APIView):
         return Response({"detail": "Пароль успешно изменён"})
 
 
-@extend_schema_view(
-    get=extend_schema(
-        summary="Информация о текущем пользователе",
-        responses=ProfileSerializer,
-    ),
-    patch=extend_schema(
-        summary="Обновление данных профиля",
-        request=ProfileUpdateSerializer,
-        responses=ProfileSerializer,
-    ),
+@extend_schema(
+    summary="Информация о текущем пользователе",
+    responses=ProfileSerializer,
 )
-class ProfileView(RetrieveUpdateAPIView):
-    http_method_names = ["get", "patch"]
+class ProfileView(RetrieveAPIView):
+    serializer_class = ProfileSerializer
 
     def get_object(self):
         return self.request.user
 
-    def get_serializer_class(self):
-        if self.request.method == "PATCH":
-            return ProfileUpdateSerializer
 
-        return ProfileSerializer
+@extend_schema(
+    summary="Обновление данных профиля",
+    request=ProfileUpdateSerializer,
+    responses=ProfileSerializer,
+)
+class UpdateProfileView(UpdateAPIView):
+    http_method_names = ["post"]
+    serializer_class = ProfileUpdateSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def post(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
 
 @extend_schema(
