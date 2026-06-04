@@ -186,7 +186,7 @@ class DishAdmin(BaseAdmin):
         links = []
 
         for tag in tags:
-            url = f"/admin/users/customuser/{tag.id}/change/"
+            url = f"/admin/menu/tag/{tag.id}/change/"
             links.append(f'<a href="{url}">{tag}</a>')
         return mark_safe(", ".join(links))
 

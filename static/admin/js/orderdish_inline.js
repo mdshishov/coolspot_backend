@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const priceInput = row.querySelector('input[name$="-dish_price"]');
         const quantityInput = row.querySelector('input[name$="-quantity"]');
 
-        const totalCell = row.querySelector('.field-total_price');
+        const totalCell = row.querySelector('.field-total_price p');
 
         if (!priceInput || !quantityInput || !totalCell) {
             return;
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const total = price * quantity;
 
-        totalCell.innerText = total.toFixed(2);
+        totalCell.textContent = total.toFixed(2);
     }
 
     function bindRow(row) {

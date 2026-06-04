@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 
-admin.site.site_header = 'COOLSPOT'
+admin.site.site_header = 'CoolSpot Admin'
 admin.site.site_title = 'CoolSpot Admin'
 admin.site.index_title = 'Панель управления рестораном'
 

@@ -9,6 +9,7 @@ from slugify import slugify
 
 class Category(models.Model):
     class Meta:
+        ordering = ["title"]
         verbose_name = "категория"
         verbose_name_plural = "категории"
 
@@ -33,6 +34,7 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     class Meta:
+        ordering = ["title"]
         constraints = [
             models.UniqueConstraint(
                 fields=["category", "slug"],
@@ -67,6 +69,7 @@ class SubCategory(models.Model):
 
 class Tag(models.Model):
     class Meta:
+        ordering = ["title"]
         verbose_name = "тэг блюда"
         verbose_name_plural = "тэги блюд"
 
@@ -241,6 +244,8 @@ class Dish(models.Model):
         return round(self.carbs_100 * self.amount / 100)
 
     def __str__(self):
+        if self.subcategory is not None:
+            return f"{self.title} ({self.subcategory})"
         return self.title
 
 

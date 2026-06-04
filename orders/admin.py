@@ -5,6 +5,7 @@ from django.forms import Textarea
 from django.utils.html import format_html
 
 from core.admin import BaseAdmin
+from .forms import OrderDishForm
 from .models import Order, OrderDish
 
 
@@ -13,15 +14,16 @@ class OrderDishInline(admin.TabularInline):
         js = ("admin/js/orderdish_inline.js",)
 
     model = OrderDish
+    form = OrderDishForm
     extra = 0
-    readonly_fields = ("total_price",)
-    fields = ("dish", "dish_title", "quantity", "dish_price", "total_price")
+    readonly_fields = ("total_price", )
+    fields = ("dish", "quantity", "dish_title", "dish_price", "total_price")
     autocomplete_fields = ("dish",)
 
     def total_price(self, obj):
         return obj.total_price
 
-    total_price.short_description = "Итоговая цена"
+    total_price.short_description = "Итоговая цена (₽)"
 
 
 @admin.register(Order)
@@ -49,6 +51,11 @@ class OrderAdmin(BaseAdmin):
         return obj.total_dishes
 
     total_dishes.short_description = "Всего блюд"
+
+    def total_price(self, obj):
+        return obj.total_price
+
+    total_price.short_description = "Итоговая цена (₽)"
 
     list_filter = (
         "status",

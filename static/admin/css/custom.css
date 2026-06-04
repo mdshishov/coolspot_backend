@@ -1,3 +1,7 @@
+* {
+    font-family: sans-serif !important;
+}
+
 label.required {
     font-weight: normal !important;
 }
@@ -7,4 +11,8 @@ label.required::after,
     content: "*" !important;
     color: var(--error-fg);
     vertical-align: top !important;
+}
+
+#site-name a {
+    color: var(--primary-fg) !important;
 }

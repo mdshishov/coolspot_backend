@@ -47,13 +47,6 @@ class Order(models.Model):
         related_name="orders",
         verbose_name="Блюда",
     )
-    total_price = models.DecimalField(
-        "Итоговая цена (₽)",
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-        help_text="Пересчитывается автоматически при сохранении",
-    )
 
     @property
     def total_positions(self):
@@ -63,14 +56,14 @@ class Order(models.Model):
     def total_dishes(self):
         return self.positions.aggregate(total=Sum("quantity"))["total"] or 0
 
+    @property
+    def total_price(self):
+        return sum(
+            position.total_price for position in self.positions.all()
+        ) or Decimal("0.00")
+
     def __str__(self):
         return f"Заказ #{self.id}"
-
-    def refresh_total_price(self):
-        self.total_price = sum(
-            position.total_price for position in self.positions.all()
-        )
-        self.save(update_fields=["total_price"])
 
     def clean(self):
         super().clean()
@@ -84,6 +77,7 @@ class Order(models.Model):
 
 class OrderDish(models.Model):
     class Meta:
+        ordering = ["dish_title"]
         constraints = [
             models.UniqueConstraint(
                 fields=["order", "dish"], name="unique_dish_in_order"
@@ -127,7 +121,7 @@ class OrderDish(models.Model):
     def total_price(self):
         if self.dish_price and self.quantity:
             return self.dish_price * self.quantity
-        return 0
+        return Decimal("0.00")
 
     def __str__(self):
         if self.dish_title:
@@ -140,9 +134,7 @@ class OrderDish(models.Model):
             if self.dish and self.dish.max_per_order is not None:
                 if self.quantity > self.dish.max_per_order:
                     raise ValidationError(
-                        {
-                            "quantity": f"Максимум для блюда: {self.dish.max_per_order}"
-                        }
+                        {"quantity": f"Максимум для блюда: {self.dish.max_per_order}"}
                     )
             if not self.dish:
                 raise ValidationError({"dish": "Укажите блюдо"})
@@ -153,5 +145,3 @@ class OrderDish(models.Model):
             self.dish_price = self.dish.price
 
         super().save(*args, **kwargs)
-
-        self.order.refresh_total_price()

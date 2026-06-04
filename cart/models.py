@@ -55,6 +55,7 @@ class Cart(models.Model):
 
 class CartDish(models.Model):
     class Meta:
+        ordering = ["-pk"]
         constraints = [
             models.UniqueConstraint(
                 fields=["cart", "dish"], name="unique_dish_in_cart"

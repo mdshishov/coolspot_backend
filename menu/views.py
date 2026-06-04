@@ -4,7 +4,7 @@ from drf_spectacular.utils import (
     OpenApiTypes,
     extend_schema,
 )
-from rest_framework.generics import ListAPIView, get_object_or_404
+from rest_framework.generics import ListAPIView, get_object_or_404, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -113,11 +113,15 @@ class MenuView(ListAPIView):
     summary="Информация о позиции меню",
     responses=DishSerializer,
 )
-class DishDetailView(APIView):
+class DishDetailView(RetrieveAPIView):
     permission_classes = [AllowAny]
+    serializer_class = DishSerializer
 
-    def get(self, request, pk):
-        dish = get_object_or_404(Dish, pk=pk)
-
-        serializer = DishSerializer(dish)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return Dish.objects.select_related(
+            "subcategory",
+            "subcategory__category",
+        ).prefetch_related(
+            "tags",
+            "images",
+        )

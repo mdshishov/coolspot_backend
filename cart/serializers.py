@@ -16,7 +16,6 @@ class CartDishSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartDish
         fields = (
-            "id",
             "dish",
             "quantity",
             "is_available",
@@ -38,7 +37,6 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = (
-            "id",
             "total_dishes",
             "selected_price",
             "positions",
