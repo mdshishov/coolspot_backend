@@ -84,6 +84,13 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
         validate_password(value)
         return value
 
+    def validate_phone(self, value):
+        if User.objects.filter(phone=value).exists():
+            raise serializers.ValidationError(
+                "Пользователь с таким телефоном уже существует"
+            )
+        return value
+
     def create(self, validated_data):
         user = User(
             phone=validated_data["phone"],
