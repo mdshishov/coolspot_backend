@@ -9,7 +9,7 @@ from slugify import slugify
 
 class Category(models.Model):
     class Meta:
-        ordering = ["title"]
+        ordering = ["order"]
         verbose_name = "категория"
         verbose_name_plural = "категории"
 
@@ -21,6 +21,11 @@ class Category(models.Model):
     slug = models.SlugField(
         unique=True,
         help_text="URL-идентификатор категории (используется в маршрутах вместо ID)",
+    )
+    order = models.PositiveIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Порядок отображения на сайте",
     )
 
     def save(self, *args, **kwargs):
@@ -34,7 +39,7 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     class Meta:
-        ordering = ["title"]
+        ordering = ["order"]
         constraints = [
             models.UniqueConstraint(
                 fields=["category", "slug"],
@@ -56,6 +61,11 @@ class SubCategory(models.Model):
     )
     slug = models.SlugField(
         help_text="URL-идентификатор подкатегории (используется в маршрутах вместо ID)",
+    )
+    order = models.PositiveIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Порядок отображения на сайте",
     )
 
     def save(self, *args, **kwargs):
@@ -214,9 +224,7 @@ class Dish(models.Model):
             return self.price
 
         return Decimal(
-            round(
-                self.price * (100 - self.discount_percent) / 100
-            )
+            round(self.price * (100 - self.discount_percent) / 100)
         ).quantize(Decimal("0.00"))
 
     @property

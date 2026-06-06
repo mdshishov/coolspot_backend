@@ -54,8 +54,14 @@ class CategoryAdmin(BaseAdmin):
         "id",
         "title",
         "slug",
+        "order",
         "subcategories_count",
         "subcategories_list",
+    )
+    list_editable = (
+        "title",
+        "slug",
+        "order",
     )
     search_fields = ("title", "slug")
     prepopulated_fields = {"slug": ("title",)}
@@ -85,7 +91,13 @@ class SubCategoryAdmin(BaseAdmin):
         "id",
         "title",
         "slug",
+        "order",
         "category",
+    )
+    list_editable = (
+        "title",
+        "slug",
+        "order",
     )
     list_filter = ("category",)
     search_fields = (

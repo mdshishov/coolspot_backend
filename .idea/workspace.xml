@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cd0a9ac7-8ede-4420-bba2-e8aac43fb80f" name="Changes" comment="Add orders API and main page admin settings">
+    <list default="true" id="cd0a9ac7-8ede-4420-bba2-e8aac43fb80f" name="Changes" comment="Fix user API bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/menu/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/menu/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +172,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780551584277</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Fix user API bug">
+      <option name="closed" value="true" />
+      <created>1780659042925</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780659042925</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -183,6 +192,7 @@
     <MESSAGE value="Update cart API" />
     <MESSAGE value="Update users API" />
     <MESSAGE value="Add orders API and main page admin settings" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add orders API and main page admin settings" />
+    <MESSAGE value="Fix user API bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix user API bug" />
   </component>
 </project>
