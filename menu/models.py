@@ -79,7 +79,7 @@ class SubCategory(models.Model):
 
 class Tag(models.Model):
     class Meta:
-        ordering = ["title"]
+        ordering = ["order"]
         verbose_name = "тэг блюда"
         verbose_name_plural = "тэги блюд"
 
@@ -91,6 +91,11 @@ class Tag(models.Model):
     slug = models.SlugField(
         unique=True,
         help_text="Значение для фильтрации через query параметр (?tag=...)",
+    )
+    order = models.PositiveIntegerField(
+        "Порядок",
+        default=0,
+        help_text="Порядок отображения на сайте",
     )
 
     def __str__(self):

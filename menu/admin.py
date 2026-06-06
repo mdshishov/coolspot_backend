@@ -111,7 +111,12 @@ class SubCategoryAdmin(BaseAdmin):
 
 @admin.register(Tag)
 class TagAdmin(BaseAdmin):
-    list_display = ("admin_actions", "id", "title", "slug", "dishes_list")
+    list_display = ("admin_actions", "id", "title", "slug", "order", "dishes_list")
+    list_editable = (
+        "title",
+        "slug",
+        "order",
+    )
     search_fields = ("title", "slug")
     prepopulated_fields = {"slug": ("title",)}
 
