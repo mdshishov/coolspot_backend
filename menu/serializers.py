@@ -113,7 +113,7 @@ class DishSerializer(serializers.ModelSerializer):
     def get_weight(self, obj):
         return {
             "value": obj.amount,
-            "unit": obj.unit,
+            "unit": obj.get_unit_display(),
             "display": f"{obj.amount} {obj.get_unit_display()}",
         }
 
