@@ -144,6 +144,8 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "https://cool-spot.ru",
         "https://www.cool-spot.ru",
+        "http://cool-spot.ru",
+        "http://www.cool-spot.ru",
     ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -193,3 +195,10 @@ SPECTACULAR_SETTINGS = {
         }
     ],
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://cool-spot.ru",
+    "https://www.cool-spot.ru",
+    "http://cool-spot.ru",
+    "http://www.cool-spot.ru",
+]
