@@ -10,22 +10,29 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import environ
 from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / ".env")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ampb@uoix-hlxx3%&h&gi1uwt4^4^=q#4ig)@n2_mnym(1nam4"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "cool-spot.ru",
+    "www.cool-spot.ru",
+]
 
 # Application definition
 
@@ -85,11 +92,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "coolspot_db",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
 
@@ -128,9 +135,16 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+if DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "https://cool-spot.ru",
+        "https://www.cool-spot.ru",
+    ]
 CORS_ALLOW_CREDENTIALS = True
 
 AUTH_USER_MODEL = "users.CustomUser"
@@ -171,6 +185,8 @@ SPECTACULAR_SETTINGS = {
             }
         }
     },
+    "SWAGGER_UI_FAVICON_HREF": "/static/images/favicon.ico",
+    "REDOC_FAVICON_HREF": "/static/images/favicon.ico",
     "SECURITY": [
         {
             "jwtAuth": [],
