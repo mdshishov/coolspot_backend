@@ -140,6 +140,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+STATIC_ROOT = "/app/staticfiles"
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS = [
