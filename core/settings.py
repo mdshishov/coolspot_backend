@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 import environ
 from datetime import timedelta
 from pathlib import Path
@@ -18,7 +18,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env")
+
+env_file = BASE_DIR / ".env"
+if os.path.exists(env_file):
+    environ.Env.read_env(env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -152,7 +155,11 @@ CORS_ALLOW_CREDENTIALS = True
 AUTH_USER_MODEL = "users.CustomUser"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+
+if DEBUG:
+    MEDIA_ROOT = BASE_DIR / "media"
+else:
+    MEDIA_ROOT = "/app/media"
 
 LANGUAGE_CODE = "ru"
 
