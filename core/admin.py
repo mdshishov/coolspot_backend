@@ -21,14 +21,9 @@ class BaseAdmin(admin.ModelAdmin):
             args=[obj.id]
         )
 
-        delete_url = reverse(
-            f'admin:{app_label}_{model_name}_delete',
-            args=[obj.id]
-        )
-
         return format_html(
             '''
-            <a class="changelink" style="text-decoration: none" href="{}"></a>&nbsp;<a class="deletelink" style="text-decoration: none" href="{}"></a>
+            <a class="changelink" style="text-decoration: none" href="{}"></a>
             ''',
             edit_url,
             delete_url,
