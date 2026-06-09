@@ -6,6 +6,8 @@ from django.db import models
 from django.db.models import Q
 from slugify import slugify
 
+from coolspot_backend.menu.validators import validate_image_size, image_extension_validator
+
 
 class Category(models.Model):
     class Meta:
@@ -282,7 +284,12 @@ class DishImage(models.Model):
         verbose_name = "изображение блюда"
         verbose_name_plural = "изображения блюд"
 
-    image = models.ImageField("Изображение", upload_to=upload_image_path)
+    image = models.ImageField(
+        "Изображение",
+        upload_to=upload_image_path,
+        validators=[validate_image_size, image_extension_validator],
+        help_text="Размер изображения не должен превышать 2MB"
+    )
     image_type = models.CharField(
         "Тип изображения",
         max_length=20,
