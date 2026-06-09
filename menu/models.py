@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Q
 from slugify import slugify
 
-from coolspot_backend.menu.validators import validate_image_size, image_extension_validator
+from .validators import validate_image_size, image_extension_validator
 
 
 class Category(models.Model):
