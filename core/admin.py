@@ -26,5 +26,4 @@ class BaseAdmin(admin.ModelAdmin):
             <a class="changelink" style="text-decoration: none" href="{}"></a>
             ''',
             edit_url,
-            delete_url,
         )
