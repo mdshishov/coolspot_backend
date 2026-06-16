@@ -33,7 +33,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 
 if DEBUG:
-    ALLOWED_HOSTS = ["127.0.0.1"]
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 else:
     ALLOWED_HOSTS = [
         "cool-spot.ru",

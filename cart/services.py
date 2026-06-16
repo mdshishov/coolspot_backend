@@ -39,7 +39,7 @@ class CartService:
             cursor.execute(
                 """
                     UPDATE cart_cartdish cd
-                    SET is_selected = FALSE
+                    SET is_selected = FALSE, quantity = 1
                     FROM menu_dish d
                     WHERE cd.dish_id = d.id
                       AND cd.cart_id = %s
@@ -72,6 +72,14 @@ class CartService:
     def normalize_position(dish, quantity=None, is_selected=None):
         warnings = []
 
+        if quantity is not None:
+            if quantity <= 0:
+                return {
+                    "warnings": warnings,
+                    "quantity": 0,
+                    "is_selected": False,
+                }
+
         if not dish.is_available:
             warnings.append(
                 {
@@ -86,18 +94,19 @@ class CartService:
                 "is_selected": False,
             }
 
-        if quantity is not None:
-            if quantity <= 0:
-                quantity = 0
-            elif dish.max_per_order is not None:
-                quantity = min(quantity, dish.max_per_order)
-                warnings.append(
-                    {
-                        "code": "max_per_order_exceeded",
-                        "dish_id": dish.id,
-                        "message": f"Количество уменьшено до {dish.max_per_order}",
-                    }
-                )
+        if (
+                quantity is not None
+                and dish.max_per_order is not None
+                and quantity > dish.max_per_order
+        ):
+            quantity = dish.max_per_order
+            warnings.append(
+                {
+                    "code": "max_per_order_exceeded",
+                    "dish_id": dish.id,
+                    "message": f"Количество уменьшено до {dish.max_per_order}",
+                }
+            )
 
         return {
             "warnings": warnings,
